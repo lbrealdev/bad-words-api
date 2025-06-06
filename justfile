@@ -4,8 +4,6 @@ set unstable
 set dotenv-load := true
 set positional-arguments
 
-# Variables
-
 @run *msg="This new software is absolute bullshit.":
     just _api "{{ msg }}"
 
