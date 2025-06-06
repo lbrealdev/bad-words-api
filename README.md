@@ -9,6 +9,9 @@ To run this example, first create an account on [API Layer](https://apilayer.com
 
 ## Usage
 
+> [!NOTE]
+> This repository uses [just](https://github.com/casey/just) as a command task runner.
+
 Before running the request, create an `.env` file with your token:
 ```shell
 echo 'TOKEN=<bad-words-api-key>' > .env
@@ -41,9 +44,6 @@ Output:
   "output_content": "That *** is such a complete ***, I wish he would just leave."
 }
 ```
-
-> [!NOTE]
-> This repository uses [just](https://github.com/casey/just) as a command task runner.
 
 ## Sources
 
