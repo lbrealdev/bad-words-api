@@ -11,6 +11,11 @@ To run this example, first create an account on [API Layer](https://apilayer.com
 
 **NOTE:** This repository uses [just](https://github.com/casey/just) as a command task runner.
 
+Before running the request, create an `.env` file with your token:
+```shell
+echo 'TOKEN=<bad-words-api-key>' > .env
+```
+
 To make a request, run the following commands below:
 ```shell
 just run
