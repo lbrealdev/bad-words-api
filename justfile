@@ -4,7 +4,9 @@ set unstable
 set dotenv-load := true
 set positional-arguments
 
-@run *msg="Go fuck yourself!!":
+# Variables
+
+@run *msg="This new software is absolute bullshit.":
     just _api "{{ msg }}"
 
 @_api body:
