@@ -16,9 +16,27 @@ To make a request, run the following commands below:
 just run
 ```
 
+Output:
+```json
+{
+  "bad_words_total": 1,
+  "input_content": "This new software is absolute bullshit.",
+  "output_content": "This new software is absolute ********."
+}
+```
+
 It's also possible to pass a new sentence as an argument:
 ```shell
 just run "That guy is such a complete ass, I wish he would just leave."
+```
+
+Output:
+```json
+{
+  "bad_words_total": 2,
+  "input_content": "That guy is such a complete ass, I wish he would just leave.",
+  "output_content": "That *** is such a complete ***, I wish he would just leave."
+}
 ```
 
 ## Sources
