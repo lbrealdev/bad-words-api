@@ -16,7 +16,7 @@ To make a request, run the following commands below:
 just run
 ```
 
-It's also possible pass a new sentence as argument:
+It's also possible to pass a new sentence as an argument:
 ```shell
 just run "That guy is such a complete ass, I wish he would just leave."
 ```

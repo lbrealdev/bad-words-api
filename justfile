@@ -4,6 +4,12 @@ set unstable
 set dotenv-load := true
 set positional-arguments
 
+@lint:
+    cargo clippy
+
+@fmt:
+    cargo fmt
+
 @run *msg="This new software is absolute bullshit.":
     just _api "{{ msg }}"
 
