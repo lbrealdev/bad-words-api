@@ -1,3 +1,6 @@
+#![warn(clippy::all)]
+
+use colored::*;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use std::{env, time::Duration};
@@ -11,7 +14,9 @@ struct Message {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let token = env::var("API_KEY").expect("Variable 'API_KEY' was not found!");
+    let token = env::var("API_KEY")
+        .expect("Environment variable API_KEY is required (e.g., export API_KEY=your_token)");
+
     let body = env::var("BODY").expect("Variable 'BODY' was not found!");
 
     let client = Client::builder()
@@ -36,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let json_pretty = serde_json::to_string_pretty(&json)?;
 
-    println!("{}", json_pretty);
+    println!("{}", json_pretty.bright_green());
 
     Ok(())
 }
