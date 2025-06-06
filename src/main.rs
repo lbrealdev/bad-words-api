@@ -3,7 +3,7 @@
 use colored::*;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use std::{env, time::Duration};
+use std::{env, process, time::Duration};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Message {
@@ -52,9 +52,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
         Err(e) if e.is_timeout() => {
             eprintln!("Timeout! The request took too long to complete.");
+            process::exit(1);
         }
         Err(e) => {
             eprintln!("Error: {e}");
+            process::exit(1);
         }
     }
 
