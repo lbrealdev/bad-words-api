@@ -12,6 +12,8 @@ struct Message {
     censored_content: String,
 }
 
+static API_URL: &str = "https://api.apilayer.com/bad_words?censor_character=*";
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let token = env::var("API_KEY")
@@ -24,24 +26,37 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .timeout(Duration::from_secs(10))
         .build()?;
 
-    let res = client
-        .post("https://api.apilayer.com/bad_words?censor_character=*")
+    let response = client
+        .post(API_URL)
         .header("apikey", &token)
         .body(body)
         .send()
-        .await?
-        .json::<Message>()
-        .await?;
+        .await;
 
-    let json = serde_json::json!({
-        "input_content": res.content,
-        "output_content": res.censored_content,
-        "bad_words_total": res.bad_words_total,
-    });
+    match response {
+        Ok(res) => match res.json::<Message>().await {
+            Ok(msg) => {
+                let json = serde_json::json!({
+                    "input_content": msg.content,
+                    "output_content": msg.censored_content,
+                    "bad_words_total": msg.bad_words_total,
+                });
 
-    let json_pretty = serde_json::to_string_pretty(&json)?;
+                let json_pretty = serde_json::to_string_pretty(&json)?;
 
-    println!("{}", json_pretty.bright_green());
+                println!("{}", json_pretty.bright_green());
+            }
+            Err(e) => {
+                eprintln!("JSON convert error: {e}");
+            }
+        },
+        Err(e) if e.is_timeout() => {
+            eprintln!("Timeout! The request took too long to complete.");
+        }
+        Err(e) => {
+            eprintln!("Error: {e}");
+        }
+    }
 
     Ok(())
 }
