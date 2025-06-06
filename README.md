@@ -2,10 +2,10 @@
 
 This repository is a simple example of how to use Reqwest to interact with the **Bad Words API** through **API Layer**.
 
-To run this example, first create an account on [API Layer](https://apilayer.com/) for a free subscription and generate an API Key.
+To run this example, first create an account on [API Layer](https://apilayer.com/) for a free subscription and generate your API Key.
 
 > [!TIP]
-> You can also use an alias email like [simplelogin](https://simplelogin.io/) or [addy](https://addy.io/) for create your account.
+> You can also use an alias email service like [SimpleLogin](https://simplelogin.io/) or [Addy](https://addy.io/) to create your account.
 
 ## Usage
 
