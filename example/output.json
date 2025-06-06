@@ -1,0 +1,25 @@
+{
+  "content": "AHOY, fuck you asshole",
+  "bad_words_total": 2,
+  "bad_words_list": [
+    {
+      "original": "fuck you",
+      "word": "fuck you",
+      "deviations": 0,
+      "info": 2,
+      "start": 6,
+      "end": 14,
+      "replacedLen": 7
+    },
+    {
+      "original": "asshole",
+      "word": "asshole",
+      "deviations": 0,
+      "info": 2,
+      "start": 15,
+      "end": 22,
+      "replacedLen": 7
+    }
+  ],
+  "censored_content": "AHOY, ******** *******"
+}
