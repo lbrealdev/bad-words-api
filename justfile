@@ -14,4 +14,4 @@ set positional-arguments
     just _api "{{ msg }}"
 
 @_api body:
-    export API_KEY="$TOKEN" BODY="$1" && cargo run
+    export API_KEY="$TOKEN" BODY="$1" && cargo run -q
