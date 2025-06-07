@@ -1,5 +1,6 @@
 #![warn(clippy::all)]
 
+use anyhow::{Result, anyhow};
 use colored::*;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -15,20 +16,21 @@ struct Message {
 static API_URL: &str = "https://api.apilayer.com/bad_words?censor_character=*";
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let token = env::var("API_KEY")
-        .expect("Environment variable API_KEY is required (e.g., export API_KEY=your_token)");
+async fn main() -> Result<()> {
+    let token = env::var("API_KEY").map_err(|_| {
+        anyhow!("Environment variable API_KEY is required (e.g., export API_KEY=your_token)")
+    })?;
 
-    let body = env::var("BODY").expect("Variable 'BODY' was not found!");
+    let body = env::var("BODY").map_err(|_| anyhow!("Variable 'BODY' was not found!"))?;
 
     let client = Client::builder()
-        .connect_timeout(Duration::from_secs(5))
-        .timeout(Duration::from_secs(10))
+        .connect_timeout(Duration::from_secs(2))
+        .timeout(Duration::from_secs(5))
         .build()?;
 
     let response = client
         .post(API_URL)
-        .header("apikey", &token)
+        .header("apikey", token)
         .body(body)
         .send()
         .await;
