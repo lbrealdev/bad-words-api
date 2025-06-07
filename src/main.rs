@@ -1,8 +1,10 @@
 #![warn(clippy::all)]
 
+use anyhow::{Result, anyhow};
 use colored::*;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use std::result::Result::Ok;
 use std::{env, process, time::Duration};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -15,42 +17,34 @@ struct Message {
 static API_URL: &str = "https://api.apilayer.com/bad_words?censor_character=*";
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let token = env::var("API_KEY")
-        .expect("Environment variable API_KEY is required (e.g., export API_KEY=your_token)");
+async fn main() -> Result<()> {
+    let token = env::var("API_KEY").map_err(|_| {
+        anyhow!("Environment variable API_KEY is required (e.g., export API_KEY=your_token)")
+    })?;
 
-    let body = env::var("BODY").expect("Variable 'BODY' was not found!");
+    let body = env::var("BODY").map_err(|_| anyhow!("Variable 'BODY' was not found!"))?;
 
     let client = Client::builder()
-        .connect_timeout(Duration::from_secs(5))
-        .timeout(Duration::from_secs(10))
+        .connect_timeout(Duration::from_secs(2))
+        .timeout(Duration::from_secs(5))
         .build()?;
 
-    let response = client
-        .post(API_URL)
-        .header("apikey", &token)
-        .body(body)
-        .send()
-        .await;
+    match fetch_api(&client, &token, body).await {
+        Ok(msg) => {
+            let json = serde_json::json!({
+                "input_content": msg.content,
+                "output_content": msg.censored_content,
+                "bad_words_total": msg.bad_words_total,
+            });
 
-    match response {
-        Ok(res) => match res.json::<Message>().await {
-            Ok(msg) => {
-                let json = serde_json::json!({
-                    "input_content": msg.content,
-                    "output_content": msg.censored_content,
-                    "bad_words_total": msg.bad_words_total,
-                });
+            let json_pretty = serde_json::to_string_pretty(&json)?;
 
-                let json_pretty = serde_json::to_string_pretty(&json)?;
-
-                println!("{}", json_pretty.bright_green());
-            }
-            Err(e) => {
-                eprintln!("JSON convert error: {e}");
-            }
-        },
-        Err(e) if e.is_timeout() => {
+            println!("{}", json_pretty.bright_green());
+        }
+        Err(e)
+            if e.downcast_ref::<reqwest::Error>()
+                .is_some_and(|e| e.is_timeout()) =>
+        {
             eprintln!("Timeout! The request took too long to complete.");
             process::exit(1);
         }
@@ -61,4 +55,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
+}
+
+async fn fetch_api(client: &Client, token: &str, body: String) -> Result<Message> {
+    let response = client
+        .post(API_URL)
+        .header("apikey", token)
+        .body(body)
+        .send()
+        .await?;
+
+    let msg = response.json::<Message>().await?;
+
+    Ok(msg)
 }
